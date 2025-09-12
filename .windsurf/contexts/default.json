@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "windsurf": {
+    "version": "1.0.0",
+    "configVersion": "1.0.0"
+  },
+  "name": "cerlo-admin-website",
+  "version": "0.0.1",
+  "description": "CerLo 管理后台项目",
+  "memories": ["渐进", "base", "project-structure", "tech-patterns"],
+  "rules": ["base", "typescript", "component", "structure", "tech-stack"],
+  "excludes": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.git/**",
+    "**/coverage/**",
+    "**/*.log",
+    "**/.DS_Store",
+    "**/.idea",
+    "**/.vscode",
+    "**/__pycache__",
+    "**/*.min.js",
+    "**/*.min.css",
+    "**/pnpm-lock.yaml",
+    "**/.husky/_/**"
+  ],
+  "includes": [
+    "src/**/*.{ts,tsx,js,jsx,json,css,less,scss}",
+    "public/**/*.{html,js,css,json,ico,png,jpg,jpeg,svg}",
+    "nginx/**/*.{sh,conf}",
+    "*.{json,md,js,ts,cjs}",
+    ".windsurf/**/*"
+  ],
+  "variables": {
+    "projectName": "cerlo-admin-website",
+    "author": "liangjing",
+    "framework": "React 19.1.0",
+    "buildTool": "Vite 6.3.5"
+  },
+  "commands": {
+    "prepare": "husky install",
+    "dev": "vite --mode development",
+    "build:beta": "tsc -b && vite build --mode beta",
+    "build:prod": "tsc -b && vite build --mode prod",
+    "deploy:beta": "NODE_ENV=beta node cdn-upload.cjs",
+    "deploy:prod": "NODE_ENV=prod node cdn-upload.cjs",
+    "tsc": "tsc -b tsconfig.app.json",
+    "lint": "eslint . --ext ts,tsx",
+    "preview": "vite preview",
+    "ytt": "ytt"
+  },
+  "environment": {
+    "NODE_ENV": "development",
+    "PORT": 5173,
+    "API_ENV": "development",
+    "BROWSER": "none"
+  }
+}

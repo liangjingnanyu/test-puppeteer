@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "tailwindcss";
+
+:root {
+  --text-color: #333;
+  --bg-color: #F0F0F0;
+}
+
+body {
+  margin: 0;
+}
