@@ -8,10 +8,12 @@ import {
   Tag,
   message,
   Spin,
+  Tabs,
 } from "antd";
 import { UploadOutlined, SearchOutlined, EyeOutlined } from "@ant-design/icons";
 import { imageSearchApi } from "@/services/api";
 import type { Product, SearchResult } from "@/types";
+import JsonEditor from "@/components/JsonEditor";
 
 const { Title, Text } = Typography;
 
@@ -25,6 +27,8 @@ export default function ImageRecognition() {
   const [isSearching, setIsSearching] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [searchMessage, setSearchMessage] = useState("");
+  const [resultRaw, setResultRaw] = useState<SearchResult | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("list");
 
   /**
    * 处理文件上传
@@ -33,6 +37,7 @@ export default function ImageRecognition() {
     setSelectedFile(file);
     setProducts([]);
     setSearchMessage("");
+    setResultRaw(null);
 
     return false; // 阻止自动上传
   };
@@ -49,6 +54,7 @@ export default function ImageRecognition() {
     setIsSearching(true);
     setSearchMessage("正在搜索中...");
     setProducts([]);
+    setResultRaw(null);
 
     try {
       const response = await imageSearchApi.uploadAndSearch(selectedFile);
@@ -56,6 +62,7 @@ export default function ImageRecognition() {
       if (response.success && response.data) {
         const result = response.data as SearchResult;
         setProducts(result.products || []);
+        setResultRaw(result);
         setSearchMessage(
           `搜索完成，找到 ${result.products?.length || 0} 个商品`
         );
@@ -80,6 +87,7 @@ export default function ImageRecognition() {
     setSelectedFile(null);
     setProducts([]);
     setSearchMessage("");
+    setResultRaw(null);
   };
 
   return (
@@ -201,98 +209,119 @@ export default function ImageRecognition() {
               }
             }}
           >
-            {products.length > 0 ? (
-              <div className="grid grid-cols-3 gap-4">
-                {products.map((product: Product, index: number) => (
-                  <div key={index} className="mb-4">
-                    <Card
-                      hoverable
-                      className="h-auto"
-                      styles={{
-                        body: {
-                          padding: "12px"
-                        }
-                      }}
-                      cover={
-                        product.image ? (
-                          <div className="h-64">
-                            <Image
-                              alt={product.title}
-                              src={product.image}
-                              className="w-full h-full rounded-lg"
-                              preview={{
-                                mask: (
-                                  <div className="flex items-center justify-center">
-                                    <EyeOutlined className="text-white text-lg mr-2" />
-                                    <span className="text-white">预览</span>
-                                  </div>
-                                ),
+            <Tabs
+              activeKey={activeTab}
+              onChange={setActiveTab}
+              items={[
+                {
+                  key: 'list',
+                  label: '商品列表',
+                  children: (
+                    products.length > 0 ? (
+                      <div className="grid grid-cols-3 gap-4">
+                        {products.map((product: Product, index: number) => (
+                          <div key={index} className="mb-4">
+                            <Card
+                              hoverable
+                              className="h-auto"
+                              styles={{
+                                body: {
+                                  padding: "12px"
+                                }
                               }}
-                            />
-                          </div>
-                        ) : (
-                          <div className="h-24 bg-gray-100 flex items-center justify-center">
-                            <Text type="secondary">暂无图片</Text>
-                          </div>
-                        )
-                      }
-                    >
-                      <div className="space-y-2">
-                        <Text
-                          strong
-                          className="text-xs leading-tight block"
-                          style={{
-                            display: '-webkit-box',
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                            lineHeight: '1.4'
-                          }}
-                          title={product.title}
-                        >
-                          {product.title}
-                        </Text>
-
-                        <Text strong className="text-red-500 text-sm block">
-                          {product.price}
-                        </Text>
-
-                        <div className="flex items-center justify-between">
-                          {product.source && (
-                            <Tag color="blue" className="text-xs">
-                              {product.source}
-                            </Tag>
-                          )}
-
-                          <Button
-                            type="link"
-                            size="small"
-                            icon={<EyeOutlined />}
-                            className="p-0 h-auto text-xs"
-                            onClick={() => {
-                              if (product.link) {
-                                window.open(product.link, "_blank");
-                              } else {
-                                message.info("暂无商品链接");
+                              cover={
+                                product.image ? (
+                                  <div className="h-64">
+                                    <Image
+                                      alt={product.title}
+                                      src={product.image}
+                                      className="w-full h-full rounded-lg"
+                                      preview={{
+                                        mask: (
+                                          <div className="flex items-center justify-center">
+                                            <EyeOutlined className="text-white text-lg mr-2" />
+                                            <span className="text-white">预览</span>
+                                          </div>
+                                        ),
+                                      }}
+                                    />
+                                  </div>
+                                ) : (
+                                  <div className="h-24 bg-gray-100 flex items-center justify-center">
+                                    <Text type="secondary">暂无图片</Text>
+                                  </div>
+                                )
                               }
-                            }}
-                          >
-                            查看
-                          </Button>
-                        </div>
+                            >
+                              <div className="space-y-2">
+                                <Text
+                                  strong
+                                  className="text-xs leading-tight block"
+                                  style={{
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical',
+                                    overflow: 'hidden',
+                                    lineHeight: '1.4'
+                                  }}
+                                  title={product.title}
+                                >
+                                  {product.title}
+                                </Text>
+
+                                <Text strong className="text-red-500 text-sm block">
+                                  {product.price}
+                                </Text>
+
+                                <div className="flex items-center justify-between">
+                                  {product.source && (
+                                    <Tag color="blue" className="text-xs">
+                                      {product.source}
+                                    </Tag>
+                                  )}
+
+                                  <Button
+                                    type="link"
+                                    size="small"
+                                    icon={<EyeOutlined />}
+                                    className="p-0 h-auto text-xs"
+                                    onClick={() => {
+                                      if (product.link) {
+                                        window.open(product.link, "_blank");
+                                      } else {
+                                        message.info("暂无商品链接");
+                                      }
+                                    }}
+                                  >
+                                    查看
+                                  </Button>
+                                </div>
+                              </div>
+                            </Card>
+                          </div>
+                        ))}
                       </div>
-                    </Card>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="h-full flex flex-col items-center justify-center">
-                <EyeOutlined className="text-6xl text-gray-300 mb-4" />
-                <Text type="secondary" className="text-lg">
-                  上传图片开始识图搜索
-                </Text>
-              </div>
-            )}
+                    ) : (
+                      <div className="h-full flex flex-col items-center justify-center">
+                        <EyeOutlined className="text-6xl text-gray-300 mb-4" />
+                        <Text type="secondary" className="text-lg">
+                          上传图片开始识图搜索
+                        </Text>
+                      </div>
+                    )
+                  )
+                },
+                {
+                  key: 'json',
+                  label: 'JSON 数据',
+                  children: (
+                    <div className="h-full">
+                      <JsonEditor value={resultRaw?.apiData ?? {}} height="60vh" />
+                    </div>
+                  )
+                }
+              ]}
+            />
           </Card>
         </div>
       </div>
