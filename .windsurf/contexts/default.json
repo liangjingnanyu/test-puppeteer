@@ -4,17 +4,18 @@
     "version": "1.0.0",
     "configVersion": "1.0.0"
   },
-  "name": "cerlo-admin-website",
-  "version": "0.0.1",
-  "description": "CerLo 管理后台项目",
-  "memories": ["渐进", "base", "project-structure", "tech-patterns"],
-  "rules": ["base", "typescript", "component", "structure", "tech-stack"],
+  "name": "test-puppeteer",
+  "version": "0.0.0",
+  "description": "Puppeteer 浏览器自动化测试项目",
+  "memories": ["渐进", "base", "project-structure", "react-patterns", "antd-patterns", "api-patterns", "puppeteer-patterns"],
+  "rules": ["base", "typescript", "component", "tech-stack", "puppeteer", "api"],
   "excludes": [
     "**/node_modules/**",
     "**/dist/**",
     "**/build/**",
     "**/.git/**",
     "**/coverage/**",
+    "**/uploads/**",
     "**/*.log",
     "**/.DS_Store",
     "**/.idea",
@@ -28,31 +29,32 @@
   "includes": [
     "src/**/*.{ts,tsx,js,jsx,json,css,less,scss}",
     "public/**/*.{html,js,css,json,ico,png,jpg,jpeg,svg}",
-    "nginx/**/*.{sh,conf}",
     "*.{json,md,js,ts,cjs}",
-    ".windsurf/**/*"
+    ".windsurf/**/*",
+    "server.js"
   ],
   "variables": {
-    "projectName": "cerlo-admin-website",
+    "projectName": "test-puppeteer",
     "author": "liangjing",
-    "framework": "React 19.1.0",
-    "buildTool": "Vite 6.3.5"
+    "framework": "React 19.1.1",
+    "buildTool": "Vite 7.1.2",
+    "typescript": "5.8.3",
+    "antd": "5.27.3",
+    "tailwindcss": "4.1.13",
+    "puppeteer": "24.20.0"
   },
   "commands": {
-    "prepare": "husky install",
-    "dev": "vite --mode development",
-    "build:beta": "tsc -b && vite build --mode beta",
-    "build:prod": "tsc -b && vite build --mode prod",
-    "deploy:beta": "NODE_ENV=beta node cdn-upload.cjs",
-    "deploy:prod": "NODE_ENV=prod node cdn-upload.cjs",
-    "tsc": "tsc -b tsconfig.app.json",
-    "lint": "eslint . --ext ts,tsx",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
     "preview": "vite preview",
-    "ytt": "ytt"
+    "server": "node server.js",
+    "start": "concurrently \"pnpm run server\" \"pnpm run dev\""
   },
   "environment": {
     "NODE_ENV": "development",
     "PORT": 5173,
+    "API_PORT": 3001,
     "API_ENV": "development",
     "BROWSER": "none"
   }

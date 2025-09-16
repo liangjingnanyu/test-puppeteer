@@ -1,7 +1,6 @@
 import express from "express";
 import puppeteer from "puppeteer";
 import multer from "multer";
-import path from "path";
 import fs from "fs";
 import cors from "cors";
 
@@ -396,8 +395,8 @@ app.post("/api/launch-browser", async (req, res) => {
       await browser.close();
     }
 
-    // 从请求体中获取初始页面URL，默认为百度首页
-    const { initialUrl = "https://www.baidu.com" } = req.body;
+    // 从请求体中获取初始页面URL，默认为空
+    const { initialUrl = "" } = req.body;
 
     // 🔧 启动浏览器配置详解
     browser = await puppeteer.launch({
